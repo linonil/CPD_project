@@ -1,11 +1,5 @@
 #include "linked_list.h"
 
-struct data{
-	int x;
-	int y;
-	int z;
-};
-
 struct item{
 	struct data K;
 	item* next;
@@ -15,6 +9,16 @@ item* list_init(){
 	return NULL;
 }
 
+data set_data(int x, int y, int z){
+	data k;
+
+	k.x = x;
+	k.y = y;
+	k.z = z;
+
+	return k;
+}
+
 int equal_data(data K1, data K2){
 	if(K1.x == K2.x && K1.y == K2.y && K1.z == K2.z)
 		return 1;
@@ -22,7 +26,7 @@ int equal_data(data K1, data K2){
 		return 0;
 }
 
-void* list_append(item* root, data K){
+item* list_append(item* root, data K){
 	item *new, *aux;
 
 	new = (item*)malloc(sizeof(item));
@@ -44,15 +48,15 @@ void* list_append(item* root, data K){
 		aux->next = new;
 	}
 
-	return;
+	return root;
 }
 
-void* list_remove(item* root, data K){
+item* list_remove(item* root, data K){
 	item *aux, *aux_seg;
 
 	if(root == NULL){
 		printf("Already an empty list!\n");
-		return;
+		return root;
 	}
 
 	aux = root;
@@ -61,10 +65,10 @@ void* list_remove(item* root, data K){
 		root = root->next;
 		free(aux);
 	}else{
-		while(equal_data(aux_seg->K, K)){
+		while(!equal_data(aux_seg->K, K)){
 			if(aux_seg->next == NULL){
-				printf("No data K found!\n");
-				return;
+				printf("No data K found in remove!\n");
+				return root;
 			}
 			aux = aux->next;
 			aux_seg = aux_seg->next;
@@ -72,7 +76,7 @@ void* list_remove(item* root, data K){
 		aux->next = aux_seg->next;
 		free(aux_seg);
 	}
-	return;
+	return root;
 }
 
 item* list_search(item* root, data K){
@@ -84,8 +88,13 @@ item* list_search(item* root, data K){
 	}
 
 	aux = root;
-	while(equal_data(aux->K, K) && aux != NULL)
+	while(!equal_data(aux->K, K)){
+		if(aux->next == NULL){
+			printf("No data K found in search!\n");
+			return NULL;
+		}
 		aux = aux->next;
+	}
 
 	if(aux == NULL){
 		printf("Element not found, returning NULL\n");
@@ -96,13 +105,26 @@ item* list_search(item* root, data K){
 
 }
 
-void* list_free(item* root){
+void list_free(item* root){
 	item *aux;
 
 	while(root != NULL){
 		aux = root;
 		root = root->next;
 		free(aux);
+	}
+	return;
+}
+
+void list_print(item* root){
+	item *aux;
+	data k;
+
+	aux = root;
+	while(aux != NULL){
+		k = aux->K;
+		printf("(%d,%d,%d)\n", k.x, k.y, k.z);
+		aux = aux->next;
 	}
 	return;
 }
